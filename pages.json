@@ -1,0 +1,70 @@
+{
+    "pages": [
+        //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+        {
+            "path": "pages/index/index",
+            "style": {
+                "navigationBarTitleText": "首页", //顶部导航名称
+                "navigationBarBackgroundColor": "#192b41", //顶部导航背景色
+                "backgroundColor": "#192b41", //下拉背景色
+                "backgroundColorBottom": "#192b41", //底部背景色
+                "navigationBarTextStyle": "white", //顶部导航字体颜色
+                "enablePullDownRefresh": true //是否下拉刷新
+            }
+        },
+        {
+            "path": "pages/mine/mine",
+            "style": {
+                "navigationBarTitleText": "",
+                "navigationBarBackgroundColor": "#658bfd",
+                "navigationBarTextStyle": "white",
+                "enablePullDownRefresh": false
+            }
+        },
+        {
+            "path": "pages/myChargPoint/addChargPoint",
+            "style": {
+                "navigationBarTitleText": "添加充电桩",
+                "navigationBarBackgroundColor": "#FFFFFF",
+                "enablePullDownRefresh": false
+            }
+        }
+    ],
+    "globalStyle": {
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "智汇充电",
+        "navigationBarBackgroundColor": "#F8F8F8",
+        "backgroundColor": "#F8F8F8"
+    },
+    "tabBar": {
+        "color": "#d6d6d6",
+        "selectedColor": "#467BFD",
+        "borderStyle": "black",
+        "backgroundColor": "#ffffff",
+        "list": [
+            {
+                "pagePath": "pages/index/index",
+                "iconPath": "static/index.png",
+                "selectedIconPath": "static/indexed.png",
+                "text": "首页"
+            },
+            {
+                "pagePath": "pages/mine/mine",
+                "iconPath": "static/mine.png",
+                "selectedIconPath": "static/mined.png",
+                "text": "我的"
+            }
+        ]
+    },
+    "condition": {
+        //模式配置，今开发期间有效
+        "current": 0, //当前激活的模式
+        "list": [
+            {
+                "name": "test",
+                "path": "pages/index/index",
+                "query": ""
+            }
+        ]
+    }
+}

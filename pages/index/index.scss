@@ -1,0 +1,405 @@
+@import "@/asset/scss/common.scss";
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.home {
+  z-index: 1;
+  position: relative;
+  width: 750rpx;
+  // height: 1504rpx;
+  // background-color: rgba(25, 43, 65, 1) !important;
+  overflow: hidden;
+
+  .box1 {
+    z-index: 2;
+    height: 100vh;
+    background-color: rgba(25, 43, 65, 1) !important;
+    width: 750rpx;
+    position: relative;
+
+    .bd1 {
+      z-index: auto;
+      width: 134rpx;
+      height: 24rpx;
+      justify-content: space-between;
+      margin: 32rpx 0 0 586rpx;
+
+      .label1 {
+        z-index: 31;
+        width: 34rpx;
+        height: 22rpx;
+        margin-top: 2rpx;
+      }
+    }
+
+    .bd2 {
+      z-index: auto;
+      width: 174rpx;
+      height: 64rpx;
+      margin: 44rpx 0 0 564rpx;
+
+      .layer1 {
+        z-index: 7;
+        width: 174rpx;
+        height: 64rpx;
+      }
+    }
+
+    .bd14 {
+      z-index: auto;
+      width: 598rpx;
+      height: 134rpx;
+      justify-content: space-between;
+      // margin: 364rpx 0 0 76rpx;
+      background-color: unset !important;
+      position: absolute;
+      top: 870rpx;
+      left: 80rpx;
+
+      .layer11 {
+        z-index: 78;
+        height: 134rpx;
+        background-color: rgba(31, 54, 80, 1);
+        width: 134rpx;
+        align-items: center;
+        background: url('@/static/start.png') center center no-repeat;
+
+        .layer111 {
+          position: absolute;
+          bottom: -40rpx;
+          z-index: 99;
+          position: absolute;
+          width: 56rpx;
+          display: block;
+          overflow-wrap: break-word;
+          color: rgba(51, 200, 142, 1);
+          font-size: 28rpx;
+          line-height: 40rpx;
+          text-align: left;
+        }
+      }
+
+      .layer12 {
+        z-index: 83;
+        height: 134rpx;
+        background-color: rgba(31, 54, 80, 1);
+        width: 134rpx;
+        align-items: center;
+        background: url('@/static/appoint.png') center center no-repeat;
+
+        .layer122 {
+          position: absolute;
+          bottom: -40rpx;
+          z-index: 98;
+          position: absolute;
+          width: 56rpx;
+          display: block;
+          overflow-wrap: break-word;
+          color: rgba(215, 116, 45, 1);
+          font-size: 28rpx;
+          line-height: 40rpx;
+          text-align: left;
+        }
+      }
+
+      .layer13 {
+        z-index: 91;
+        height: 134rpx;
+        background-color: rgba(31, 54, 80, 1);
+        width: 134rpx;
+        align-items: center;
+        background: url('@/static/stop.png') center center no-repeat;
+
+        .layer133 {
+          position: absolute;
+          bottom: -40rpx;
+          z-index: 98;
+          position: absolute;
+          width: 56rpx;
+          display: block;
+          overflow-wrap: break-word;
+          color: rgba(237, 99, 99, 1);
+          font-size: 28rpx;
+          line-height: 40rpx;
+          text-align: left;
+        }
+      }
+    }
+
+    .bd-bj {
+      width: 452rpx;
+      height: 622rpx;
+      position: absolute;
+      top: 80rpx;
+      left: 50%;
+      transform: translatex(-50%);
+      // background: url('@/static/3.png');
+      // background-image: url('@/static/3.png');
+    }
+
+    .bd-bj2 {
+      height: 356rpx;
+      width: 658rpx;
+      position: absolute;
+      top: 180rpx;
+      left: 50%;
+      transform: translatex(-50%);
+      // background: url('@/static/3.png');
+      // background-image: url('@/static/3.png');
+    }
+
+    .word1 {
+      z-index: 73;
+      position: absolute;
+      left: 290rpx;
+      top: 722rpx;
+      width: 200rpx;
+      display: block;
+      overflow-wrap: break-word;
+      color: rgba(51, 238, 151, 1);
+      font-size: 48rpx;
+      font-family: PingFangSC-Medium;
+      line-height: 66rpx;
+      text-align: center;
+    }
+
+    .word2 {
+      z-index: 72;
+      position: absolute;
+      left: 544rpx;
+      top: 722rpx;
+      min-width: 116rpx;
+      display: block;
+      overflow-wrap: break-word;
+      color: rgba(51, 238, 151, 1);
+      font-size: 48rpx;
+      font-family: PingFangSC-Medium;
+      line-height: 66rpx;
+      text-align: center;
+    }
+
+    .word3 {
+      z-index: 71;
+      position: absolute;
+      left: 80rpx;
+      top: 722rpx;
+      min-width: 140rpx;
+      display: block;
+      overflow-wrap: break-word;
+      color: rgba(255, 255, 255, 1);
+      font-size: 48rpx;
+      font-family: PingFangSC-Medium;
+      line-height: 66rpx;
+      text-align: center;
+    }
+
+    .word4 {
+      z-index: 76;
+      position: absolute;
+      left: 350rpx;
+      top: 800rpx;
+      width: 52rpx;
+      display: block;
+      overflow-wrap: break-word;
+      color: rgba(153, 153, 153, 1);
+      font-size: 26rpx;
+      line-height: 36rpx;
+      text-align: center;
+    }
+
+    .word5 {
+      z-index: 75;
+      position: absolute;
+      left: 500rpx;
+      top: 800rpx;
+      width: 230rpx;
+      display: block;
+      overflow-wrap: break-word;
+      color: rgba(153, 153, 153, 1);
+      font-size: 26rpx;
+      line-height: 36rpx;
+      text-align: center;
+    }
+
+    .txt1 {
+      z-index: 74;
+      position: absolute;
+      left: 52rpx;
+      top: 800rpx;
+      width: 165rpx;
+      display: block;
+      overflow-wrap: break-word;
+      color: rgba(153, 153, 153, 1);
+      font-size: 26rpx;
+      line-height: 36rpx;
+      text-align: center;
+    }
+
+    .info2 {
+      z-index: 99;
+      position: absolute;
+      left: 348rpx;
+      top: 1200rpx;
+      width: 56rpx;
+      display: block;
+      overflow-wrap: break-word;
+      color: rgba(215, 116, 45, 1);
+      font-size: 28rpx;
+      line-height: 40rpx;
+      text-align: left;
+    }
+
+    .info3 {
+      z-index: 98;
+      position: absolute;
+      left: 108rpx;
+      top: 1200rpx;
+      width: 56rpx;
+      display: block;
+      overflow-wrap: break-word;
+      color: rgba(51, 200, 142, 1);
+      font-size: 28rpx;
+      line-height: 40rpx;
+      text-align: left;
+    }
+
+    .txt2 {
+      z-index: 97;
+      position: absolute;
+      left: 588rpx;
+      top: 1200rpx;
+      width: 56rpx;
+      display: block;
+      overflow-wrap: break-word;
+      color: rgba(237, 99, 99, 1);
+      font-size: 28rpx;
+      line-height: 40rpx;
+      text-align: left;
+    }
+
+    .word6 {
+      z-index: 113;
+      position: absolute;
+      left: 272rpx;
+      top: 1057rpx;
+      width: 208rpx;
+      display: block;
+      overflow-wrap: break-word;
+      color: rgba(112, 112, 112, 1);
+      font-size: 26rpx;
+      line-height: 36rpx;
+      text-align: center;
+    }
+  }
+
+  .word7 {
+    z-index: 21;
+    position: absolute;
+    left: 50%;
+    transform: translatex(-50%);
+    top: 33rpx;
+    display: flex;
+    background-color: transparent;
+    justify-content: center;
+    align-items: center;
+
+    text {
+      overflow-wrap: break-word;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 34rpx;
+      font-family: PingFangSC-Medium;
+      line-height: 48rpx;
+      text-align: center;
+
+    }
+
+  }
+
+  .arrow-bottom {
+    // z-index: 38;
+    display: inline-block;
+    // position: absolute;
+    // left: 460rpx;
+    // top: 84rpx;
+    margin-left: 20rpx;
+    width: 8px;
+    height: 8px;
+    border-right: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    transform: rotate(45deg);
+    margin-top: -5rpx;
+  }
+
+  .icon1 {
+    z-index: 38;
+    position: absolute;
+    left: 450rpx;
+    top: 192rpx;
+    width: 32rpx;
+    height: 32rpx;
+  }
+
+
+
+  .no-pile {
+    height: 100vh;
+    background-color: rgba(25, 43, 65, 1) !important;
+
+    view {
+      background-color: rgba(25, 43, 65, 1) !important;
+    }
+
+    .bd-no {
+      height: 212rpx;
+      width: 212rpx;
+      position: absolute;
+      top: 298rpx;
+      left: 50%;
+      transform: translatex(-50%);
+    }
+
+    .bd-no-span {
+      width: 210rpx;
+      height: 42rpx;
+      font-size: 30rpx;
+      color: #A1A1A1;
+      position: absolute;
+      top: 540rpx;
+      left: 50%;
+      transform: translatex(-50%);
+    }
+
+    .bd-bj2 {
+      height: 356rpx;
+      width: 658rpx;
+      position: absolute;
+      top: 80rpx;
+      left: 50%;
+      transform: translatex(-50%);
+      // background: url('@/static/3.png');
+      // background-image: url('@/static/3.png');
+    }
+  }
+
+  .foot {
+    @include fixed-bottom;
+    background-color: rgba(25, 43, 65, 1) !important;
+
+    button {
+      height: 112rpx !important;
+      line-height: 112rpx !important;
+    }
+
+    .primary {
+      color: rgba(62, 105, 244, 1);
+    }
+  }
+}
