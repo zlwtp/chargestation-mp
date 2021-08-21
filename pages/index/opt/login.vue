@@ -53,20 +53,19 @@ export default {
     data() {
         return {
             code: '',
-            type: 0,
-            phone: '',
-            phoneParams: {
-                sessionkey: '',
-                ivdata: '',
-                encrypdata: ''
-            },
-            loginStatus: false,
             phoneStatus: false,
             hasUserInfo: false
         }
     },
     computed: {
-        ...mapState(['userInfo', 'phoneNumber', 'encryptedData', 'iv', 'appId'])
+        ...mapState([
+            'userInfo',
+            'loginStatus',
+            'phoneNumber',
+            'encryptedData',
+            'iv',
+            'appId'
+        ])
     },
     mounted() {
         const vm = this
@@ -79,30 +78,28 @@ export default {
     },
     methods: {
         ...mapMutations(['setState']),
-        login() {
-            let vm = this
-            uni.login({
-                provider: 'weixin',
-                success(data) {
-                    vm.code = data.code
-                    let param = {
-                        code: vm.code,
-                        encryptedData: vm.encryptedData,
-                        iv: vm.iv,
-                        appId: vm.appId
-                    }
-                    vm.getOpenId(param)
-                }
-            })
-        },
+        // login() {
+        //     let vm = this
+        //     uni.login({
+        //         provider: 'weixin',
+        //         success(data) {
+        //             vm.code = data.code
+        //             let param = {
+        //                 code: vm.code,
+        //                 encryptedData: vm.encryptedData,
+        //                 iv: vm.iv,
+        //                 appId: vm.appId
+        //             }
+        //             vm.getOpenId(param)
+        //         }
+        //     })
+        // },
         getUserProfile(e) {
-            // 推荐使用wx.getUserProfile获取用户信息，开发者每次通过该接口获取用户个人信息均需用户确认
             // 开发者妥善保管用户快速填写的头像昵称，避免重复弹窗
             let vm = this
             wx.getUserProfile({
                 desc: '用于完善会员资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
                 success: res => {
-                    console.log('用于完善会员资料', res) //code
                     const { userInfo, encryptedData, iv } = res
                     uni.setStorage({
                         key: 'userInfo',
@@ -115,8 +112,7 @@ export default {
                         loginStatus: true
                     })
                     vm.hasUserInfo = true
-                    vm.loginStatus = true
-                    let param = {
+                    const param = {
                         code: vm.code,
                         encryptedData: vm.encryptedData,
                         iv: vm.iv,
@@ -126,7 +122,9 @@ export default {
                 },
                 fail: res => {
                     //用户按了拒绝按钮
-                    vm.loginStatus = false
+                    vm.setState({
+                        loginStatus: false
+                    })
                     uni.showToast({
                         title: '为了方便您的使用，请先允许授权',
                         icon: 'none'
@@ -142,32 +140,27 @@ export default {
                     method: 'POST',
                     data: param
                 })
-                if (res.code != 200) {
-                    uni.showToast({
-                        title: res.message,
-                        icon: 'none'
-                    })
-                    this.loginStatus = false
-                } else {
-                    //保存OpenId
-                    const { openId } = res.result
-                    uni.setStorage({
-                        key: 'openID',
-                        data: openId,
-                        success() {
-                            console.log('openID缓存成功')
-                        },
-                        fail() {
-                            console.log('openID缓存失败')
-                        }
-                    })
 
-                    if (openId == null) {
-                        this.hasUserInfo = false
+                //保存OpenId
+                const { openId } = res.result
+                uni.setStorage({
+                    key: 'openID',
+                    data: openId,
+                    success() {
+                        console.log('openID缓存成功')
+                    },
+                    fail() {
+                        console.log('openID缓存失败')
                     }
-                    this.loginStatus = true
-                    this.reLaunch()
+                })
+
+                if (openId == null) {
+                    this.hasUserInfo = false
                 }
+                this.setState({
+                    loginStatus: true
+                })
+                this.reLaunch()
             } catch (error) {
                 uni.removeStorage({
                     key: 'pileData',
@@ -182,7 +175,9 @@ export default {
                     }
                 })
                 this.hasUserInfo = false
-                this.loginStatus = false
+                this.setState({
+                    loginStatus: false
+                })
             }
         },
         getPhoneNumber(e) {

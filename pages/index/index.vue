@@ -14,39 +14,44 @@
             </view>
             <img
                 class="bd-bj"
-                v-if="status == 1"
+                v-if="pileInfo.status == 1"
                 src="@/static/point-bg1.gif"
             />
             <img
                 class="bd-bj"
-                v-if="status == 4"
+                v-if="pileInfo.status == 4"
                 src="@/static/point-bg2.png"
             />
             <img
                 class="bd-bj"
-                v-if="status == 6"
+                v-if="pileInfo.status == 6"
                 src="@/static/point-bg3.png"
             />
             <img
                 class="bd-bj"
-                v-if="status == 0 || status == 2 || status == 3 || status == 5"
+                v-if="
+                    pileInfo.status == 0 ||
+                    pileInfo.status == 2 ||
+                    pileInfo.status == 3 ||
+                    pileInfo.status == 5
+                "
                 src="@/static/point-bg5.png"
             />
             <img class="bd-bj2" src="@/static/point-bg.png" />
-            <span class="word1" v-if="status == 1">充电中</span>
-            <span class="word1" v-if="status == 2">待机</span>
-            <span class="word1" v-if="status == 3">插枪</span>
-            <span class="word1" v-if="status == 4">充电完成</span>
-            <span class="word1" v-if="status == 5">充电暂停</span>
+            <span class="word1" v-if="pileInfo.status == 1">充电中</span>
+            <span class="word1" v-if="pileInfo.status == 2">待机</span>
+            <span class="word1" v-if="pileInfo.status == 3">插枪</span>
+            <span class="word1" v-if="pileInfo.status == 4">充电完成</span>
+            <span class="word1" v-if="pileInfo.status == 5">充电暂停</span>
             <span
                 class="word1"
-                v-if="status == 6"
+                v-if="pileInfo.status == 6"
                 style="color: rgba(220, 83, 81, 1)"
                 >充电故障</span
             >
             <span
                 class="word1"
-                v-if="status == 0"
+                v-if="pileInfo.status == 0"
                 style="color: rgba(194, 194, 194, 1)"
                 >未连接</span
             >
@@ -61,7 +66,7 @@
         </view>
         <view @tap="openSelect" v-if="!noPile">
             <view class="word7">
-                <text>{{ name }}</text>
+                <text>{{ pileInfo.name }}</text>
                 <span class="arrow-bottom"></span>
             </view>
         </view>
@@ -90,19 +95,13 @@ export default {
     components: { loginOpt },
     data() {
         return {
-            name: '',
-            electricity: 10,
-            isStart: true,
+            pileInfo: {},
             openId: uni.getStorageSync('openID'),
-            code: '',
-            command: '',
-            sn: '',
             time: '',
             upData: null, //定时刷新任务
-            status: '',
-            chargeTime: '0',
+            chargeTime: '0', 
             chargePower: '0',
-            noPile: true,
+            noPile: false,
             powerShow: true, // 是否显示电量 时间
             applets: ''
         }
@@ -155,7 +154,6 @@ export default {
             let vm = this
             uni.login({
                 provider: 'weixin',
-                scopes: 'auth_base',
                 success(data) {
                     let param = {
                         code: data.code,
@@ -168,12 +166,12 @@ export default {
             })
         },
         async isAuth(param) {
-            const res = await this.$http({
-                url: this.$api.isAuthNew,
-                method: 'POST',
-                data: param
-            })
-            if (res.code == 200) {
+            try {
+                const res = await this.$http({
+                    url: this.$api.isAuthNew,
+                    method: 'POST',
+                    data: param
+                })
                 console.log('isAuth', res.message)
                 if (res.result.openId == null) {
                     this.openLogin()
@@ -186,7 +184,7 @@ export default {
                     this.openId = res.result.openId
                     this.getAppoint()
                 }
-            } else {
+            } catch (error) {
                 this.openLogin()
             }
         },
@@ -199,36 +197,35 @@ export default {
             })
             this.applets = ''
             uni.hideTabBar()
+            this.setState({ loginStatus: false })
             this.$refs.loginOpt.open()
         },
         // 获取绑定桩
         async getAppoint() {
-            const { result, code } = await this.$http({
-                url: this.$api.getMainPile,
-                method: 'GET',
-                data: {
-                    openId: this.openId
-                }
-            })
-            if (code == 200) {
+            try {
+                const { result, code } = await this.$http({
+                    url: this.$api.getMainPile,
+                    method: 'GET',
+                    data: {
+                        openId: this.openId
+                    }
+                })
                 if (result == null || result.length == 0) {
                     this.noData()
                     return
                 }
                 this.noPile = false
-                this.name = result.name
-                this.code = result.code
+                this.pileInfo = result
                 // 是否显示充电时间
                 if (
-                    this.code.indexOf('09') == 0 ||
-                    this.code.indexOf('03') == 0
+                    result.code.indexOf('09') == 0 ||
+                    result.code.indexOf('03') == 0
                 ) {
                     this.powerShow = false
                 } else {
                     this.powerShow = true
                 }
-                this.sn = result.sn
-                this.status = result.status
+
                 this.chargeLatest()
                 // 设置当前绑定的充电桩
                 uni.setStorage({
@@ -240,7 +237,7 @@ export default {
                     data: [result.type]
                 })
                 this.getData()
-            } else {
+            } catch (error) {
                 this.noPile = true
                 // 没有充电桩时先清除跳转参数
                 uni.setStorage({
@@ -252,20 +249,17 @@ export default {
         },
         // 最后一次充电时间
         async chargeLatest() {
-            const { result, code } = await this.$http({
-                url: this.$api.chargeLatest,
-                method: 'GET',
-                data: {
-                    code: this.code
-                }
-            })
-            if (code == 200) {
+            try {
+                const { result, code } = await this.$http({
+                    url: this.$api.chargeLatest,
+                    method: 'GET',
+                    data: {
+                        code: this.pileInfo.code
+                    }
+                })
                 this.chargeTime = result.chargeTime
                 this.chargePower = result.chargePower.toFixed(2)
-            } else {
-                // this.getAppointList()
-                // this.delClose()
-            }
+            } catch (error) {}
         },
         // 无充电桩
         noData() {
@@ -313,10 +307,7 @@ export default {
                     type.push(item.type)
                     if (item.code == pileData.code) {
                         this.noPile = false
-                        this.name = item.name
-                        this.code = item.code
-                        this.sn = item.sn
-                        this.status = item.status
+                        this.pileInfo = item
                         this.chargeLatest()
                         uni.setStorage({
                             key: 'pileData',
@@ -350,6 +341,7 @@ export default {
         },
         jumpPage() {
             //微信公众号跳转过来要做什么操作
+
             let applets = this.applets
             if (!applets) return
             uni.setStorage({
@@ -385,18 +377,18 @@ export default {
             return Array.from(new Set(array))
         },
         async startStop(command) {
-            let param = {
-                openId: this.openId,
-                code: this.code,
-                command: command,
-                sn: this.sn
-            }
-            const { code, result } = await this.$http({
-                url: this.$api.control,
-                method: 'POST',
-                data: param
-            })
-            if (code == 200) {
+            try {
+                let param = {
+                    openId: this.openId,
+                    command: command,
+                    code: this.pileInfo.code,
+                    sn: this.pileInfo.sn
+                }
+                const { code, result } = await this.$http({
+                    url: this.$api.control,
+                    method: 'POST',
+                    data: param
+                })
                 wx.showToast({
                     title:
                         command == 'start'
@@ -404,8 +396,8 @@ export default {
                             : '停止指令发送成功', // 标题
                     icon: 'none' // 图标类型，默认success
                 })
-                this.status = result.status
-            }
+                this.pileInfo.status = result.status
+            } catch (error) {}
         },
         //预约
         openAppoint() {

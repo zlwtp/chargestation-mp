@@ -24,13 +24,17 @@ export default {
                 header: option.header,
                 method: option.method || 'get',
                 success(res) {
-                    if (res.data.code === 500) {
-                        uni.showToast({
-                            title: res.data.message,
-                            icon: 'none'
-                        })
+                    switch (res.data.code) {
+                        case 200:
+                            return resolve(res.data)
+                        // 未登录或者token失效
+                        default:
+                            uni.showToast({
+                                title: res.data.message,
+                                icon: 'none'
+                            })
+                            reject(res)
                     }
-                    resolve(res.data)
                 },
                 fail(err) {
                     reject(err)
