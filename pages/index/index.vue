@@ -90,6 +90,7 @@
 
 <script>
 import loginOpt from './opt/login'
+import { dedupe } from '@/util'
 import { mapState, mapMutations } from 'vuex'
 export default {
     components: { loginOpt },
@@ -99,7 +100,7 @@ export default {
             openId: uni.getStorageSync('openID'),
             time: '',
             upData: null, //定时刷新任务
-            chargeTime: '0', 
+            chargeTime: '0',
             chargePower: '0',
             noPile: false,
             powerShow: true, // 是否显示电量 时间
@@ -165,45 +166,41 @@ export default {
                 }
             })
         },
+        // 是否授权
         async isAuth(param) {
             try {
-                const res = await this.$http({
+                const { result } = await this.$http({
                     url: this.$api.isAuthNew,
                     method: 'POST',
                     data: param
                 })
-                console.log('isAuth', res.message)
-                if (res.result.openId == null) {
+                if (result.openId == null) {
                     this.openLogin()
                 } else {
                     //保存OpenId
                     uni.setStorage({
                         key: 'openID',
-                        data: res.result.openId
+                        data: result.openId
                     })
-                    this.openId = res.result.openId
+                    this.openId = result.openId
                     this.getAppoint()
                 }
             } catch (error) {
                 this.openLogin()
             }
         },
-        //登录
+        // 打开登录授权页
         openLogin() {
             // 没有登录时先清除跳转参数
-            uni.setStorage({
-                key: 'applets',
-                data: ''
-            })
-            this.applets = ''
+            this.setApplets()
             uni.hideTabBar()
             this.setState({ loginStatus: false })
             this.$refs.loginOpt.open()
         },
-        // 获取绑定桩
+        // 获取主桩数据
         async getAppoint() {
             try {
-                const { result, code } = await this.$http({
+                const { result } = await this.$http({
                     url: this.$api.getMainPile,
                     method: 'GET',
                     data: {
@@ -227,30 +224,27 @@ export default {
                 }
 
                 this.chargeLatest()
+                this.getData()
                 // 设置当前绑定的充电桩
                 uni.setStorage({
                     key: 'pileData',
                     data: result
                 })
+                // 充电桩型号
                 uni.setStorage({
                     key: 'chargType',
                     data: [result.type]
                 })
-                this.getData()
             } catch (error) {
                 this.noPile = true
                 // 没有充电桩时先清除跳转参数
-                uni.setStorage({
-                    key: 'applets',
-                    data: ''
-                })
-                this.applets = ''
+                this.setApplets()
             }
         },
         // 最后一次充电时间
         async chargeLatest() {
             try {
-                const { result, code } = await this.$http({
+                const { result } = await this.$http({
                     url: this.$api.chargeLatest,
                     method: 'GET',
                     data: {
@@ -278,33 +272,35 @@ export default {
                 success() {}
             })
             // 没有充电桩先清除跳转参数
-            uni.setStorage({
-                key: 'applets',
-                data: ''
-            })
-            this.applets = ''
+            this.setApplets()
             this.noPile = true
             return wx.showToast({
                 title: '暂无数据', // 标题
-                icon: 'none', // 图标类型，默认success
-                duration: 2000 // 提示窗停留时间，默认1500ms
+                icon: 'none' // 图标类型，默认success
             })
         },
-        //定时获取充电桩数据 刷新
+        // 缓存充电桩状态
+        setApplets(status = '') {
+            uni.setStorage({
+                key: 'applets',
+                data: status
+            })
+            this.applets = status
+        },
+        //定时获取已绑定充电桩数据 刷新
         async getData() {
-            const { result, code } = await this.$http({
+            const { result } = await this.$http({
                 url: `${this.$api.bindingList}?openId=${this.openId}`,
                 method: 'GET'
             })
+            console.log('getData', result)
             if (result == null || result.length == 0) {
                 this.noData()
                 return
             }
-            let type = []
             const pileData = uni.getStorageSync('pileData')
             if (pileData) {
-                result.forEach(item => {
-                    type.push(item.type)
+                const type = result.map(item => {
                     if (item.code == pileData.code) {
                         this.noPile = false
                         this.pileInfo = item
@@ -314,10 +310,11 @@ export default {
                             data: item
                         })
                     }
+                    return item.type
                 })
                 if (
-                    this.code.indexOf('09') == 0 ||
-                    this.code.indexOf('03') == 0
+                    this.pileInfo.code.indexOf('09') == 0 ||
+                    this.pileInfo.code.indexOf('03') == 0
                 ) {
                     this.powerShow = false
                 } else {
@@ -325,7 +322,7 @@ export default {
                 }
                 uni.setStorage({
                     key: 'chargType',
-                    data: this.dedupe(type),
+                    data: dedupe(type),
                     success() {}
                 })
             } else {
@@ -341,40 +338,26 @@ export default {
         },
         jumpPage() {
             //微信公众号跳转过来要做什么操作
-
-            let applets = this.applets
-            if (!applets) return
-            uni.setStorage({
-                key: 'applets',
-                data: ''
-            })
-            this.applets = ''
-
-            if (!this.noPile) {
+            if (!this.applets) return
+            if (this.noPile) {
+                this.setApplets()
                 uni.showToast({
                     title: '请先绑定桩后进行操作',
-                    icon: 'none'
+                    icon: 'none',
+                    duration: 2000
                 })
                 return
             }
-            uni.setStorage({
-                key: 'applets',
-                data: ''
-            })
-            this.applets = ''
-            if (applets == 'start') {
-                this.startStop('start')
+            if (this.applets == 'start') {
+                this.setApplets()
+                vm.start()
+            } else if (this.applets == 'stop') {
+                this.setApplets()
+                vm.stop()
+            } else if (this.applets == 'appoint') {
+                this.setApplets()
+                vm.openAppoint()
             }
-            if (applets == 'stop') {
-                this.startStop('stop')
-            }
-            if (applets == 'appoint') {
-                this.openAppoint()
-            }
-        },
-
-        dedupe(array) {
-            return Array.from(new Set(array))
         },
         async startStop(command) {
             try {
@@ -384,7 +367,7 @@ export default {
                     code: this.pileInfo.code,
                     sn: this.pileInfo.sn
                 }
-                const { code, result } = await this.$http({
+                const { result } = await this.$http({
                     url: this.$api.control,
                     method: 'POST',
                     data: param
@@ -411,7 +394,6 @@ export default {
                 url: '/pages/myChargPoint/selectCharg'
             })
         },
-
         loginConfirm() {
             this.openId = uni.getStorageSync('openID')
             this.loginClose()
@@ -421,10 +403,10 @@ export default {
             uni.showTabBar()
             this.$refs.loginOpt.close()
         },
-        getUpData() {
+        getUpData() {   
             this.upData = setInterval(() => {
                 this.getData()
-            }, 1000 * 15)
+            }, 1000 * 35)
         },
         gotoAdd() {
             uni.navigateTo({
@@ -436,7 +418,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import './index.scss';
+@import './css/index.scss';
 .home2 {
     height: 100vh;
     display: flex;

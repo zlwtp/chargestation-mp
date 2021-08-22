@@ -26,6 +26,9 @@
                     获取头像昵称
                 </button>
             </view>
+            <view v-else>
+                <text class="userinfo-nickname">欢迎您：{{ userInfo.nickName }}</text>
+            </view>
             <button
                 class="bottom"
                 type="primary"
@@ -54,18 +57,12 @@ export default {
         return {
             code: '',
             phoneStatus: false,
+            loginStatus: false,
             hasUserInfo: false
         }
     },
     computed: {
-        ...mapState([
-            'userInfo',
-            'loginStatus',
-            'phoneNumber',
-            'encryptedData',
-            'iv',
-            'appId'
-        ])
+        ...mapState(['userInfo', 'phoneNumber', 'encryptedData', 'iv', 'appId'])
     },
     mounted() {
         const vm = this
@@ -78,22 +75,6 @@ export default {
     },
     methods: {
         ...mapMutations(['setState']),
-        // login() {
-        //     let vm = this
-        //     uni.login({
-        //         provider: 'weixin',
-        //         success(data) {
-        //             vm.code = data.code
-        //             let param = {
-        //                 code: vm.code,
-        //                 encryptedData: vm.encryptedData,
-        //                 iv: vm.iv,
-        //                 appId: vm.appId
-        //             }
-        //             vm.getOpenId(param)
-        //         }
-        //     })
-        // },
         getUserProfile(e) {
             // 开发者妥善保管用户快速填写的头像昵称，避免重复弹窗
             let vm = this
@@ -108,9 +89,9 @@ export default {
                     vm.setState({
                         userInfo,
                         encryptedData,
-                        iv,
-                        loginStatus: true
+                        iv
                     })
+                    vm.loginStatus = true
                     vm.hasUserInfo = true
                     const param = {
                         code: vm.code,
@@ -122,9 +103,7 @@ export default {
                 },
                 fail: res => {
                     //用户按了拒绝按钮
-                    vm.setState({
-                        loginStatus: false
-                    })
+                    vm.loginStatus = false
                     uni.showToast({
                         title: '为了方便您的使用，请先允许授权',
                         icon: 'none'
@@ -157,11 +136,13 @@ export default {
                 if (openId == null) {
                     this.hasUserInfo = false
                 }
-                this.setState({
-                    loginStatus: true
-                })
+                this.loginStatus = true
                 this.reLaunch()
             } catch (error) {
+                uni.showToast({
+                    title: 'getOpenId失败，请稍后再试。。。',
+                    icon: 'none'
+                })
                 uni.removeStorage({
                     key: 'pileData',
                     success: function () {
@@ -175,9 +156,7 @@ export default {
                     }
                 })
                 this.hasUserInfo = false
-                this.setState({
-                    loginStatus: false
-                })
+                this.loginStatus = false
             }
         },
         getPhoneNumber(e) {
@@ -275,7 +254,11 @@ export default {
         height: calc(100vh - 90rpx);
     }
 }
-
+.userinfo-nickname {
+    text-align: center;
+    display: block;
+    margin: 20rpx;
+}
 .header {
     margin: 90rpx 0 50rpx 50rpx;
     border-bottom: 1px solid #ccc;
@@ -300,8 +283,7 @@ export default {
 .content text,
 .phone {
     display: block;
-    color: #9d9d9d;
-    margin-top: 40rpx;
+    margin:20rpx;
     text-align: center;
 }
 

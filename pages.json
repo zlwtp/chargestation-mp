@@ -22,9 +22,90 @@
             }
         },
         {
+            "path": "pages/index/appointList",
+            "style": {
+                "navigationBarTitleText": "预约列表",
+                "navigationBarBackgroundColor": "#FFFFFF",
+                "enablePullDownRefresh": true
+            }
+        },
+        {
+            "path": "pages/index/appoint",
+            "style": {
+                "navigationBarTitleText": "添加预约",
+                "navigationBarBackgroundColor": "#FFFFFF",
+                "enablePullDownRefresh": false
+            }
+        },
+        {
             "path": "pages/myChargPoint/addChargPoint",
             "style": {
                 "navigationBarTitleText": "添加充电桩",
+                "navigationBarBackgroundColor": "#FFFFFF",
+                "enablePullDownRefresh": false
+            }
+        },
+        {
+            "path": "pages/myChargPoint/selectCharg",
+            "style": {
+                "navigationBarTitleText": "选择充电桩",
+                "navigationBarBackgroundColor": "#4873f7",
+                "navigationBarTextStyle": "white",
+                "enablePullDownRefresh": true
+            }
+        },
+        {
+            "path": "pages/myChargPoint/chargHistory",
+            "style": {
+                "navigationBarTitleText": "充电记录",
+                "navigationBarBackgroundColor": "#FFFFFF",
+                "enablePullDownRefresh": false
+            }
+        },
+        {
+            "path": "pages/myChargPoint/faultInfo",
+            "style": {
+                "navigationBarTitleText": "故障信息",
+                "navigationBarBackgroundColor": "#FFFFFF",
+                "enablePullDownRefresh": false
+            }
+        },
+        {
+            "path": "pages/myChargPoint/chargPointMember",
+            "style": {
+                "navigationBarTitleText": "查看成员",
+                "navigationBarBackgroundColor": "#FFFFFF",
+                "enablePullDownRefresh": true
+            }
+        },
+        {
+            "path": "pages/feedback/feedback",
+            "style": {
+                "navigationBarTitleText": "意见反馈",
+                "navigationBarBackgroundColor": "#FFFFFF",
+                "enablePullDownRefresh": true
+            }
+        },
+        {
+            "path": "pages/feedback/addFeedback",
+            "style": {
+                "navigationBarTitleText": "添加意见反馈",
+                "navigationBarBackgroundColor": "#FFFFFF",
+                "enablePullDownRefresh": false
+            }
+        },
+        {
+            "path": "pages/feedback/feedbackInfo",
+            "style": {
+                "navigationBarTitleText": "意见反馈详情",
+                "navigationBarBackgroundColor": "#FFFFFF",
+                "enablePullDownRefresh": false
+            }
+        },
+        {
+            "path": "pages/feedback/commonProblem",
+            "style": {
+                "navigationBarTitleText": "常见问题",
                 "navigationBarBackgroundColor": "#FFFFFF",
                 "enablePullDownRefresh": false
             }

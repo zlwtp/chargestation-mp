@@ -9,7 +9,6 @@ const store = new Vuex.Store({
         appName: '智汇充电',
         userInfo: {}, //微信用户信息
         iv: '',
-        loginStatus: true,
         encryptedData: '',
         phoneNumber: '',
         websiteUrl: 'https://8.142.75.174/upload' //图片地址—测试

@@ -96,6 +96,20 @@
 
 <script>
 import wPicker from '@/components/w-picker/w-picker.vue'
+
+const defaultparams = {
+    openId: uni.getStorageSync('openID'),
+    address: '',
+    areaId: '',
+    areaName: '',
+    cityId: '',
+    cityName: '',
+    code: '',
+    name: '',
+    provinceId: '',
+    provinceName: '',
+    sn: ''
+}
 export default {
     name: 'addChargPoint',
     components: {
@@ -103,19 +117,7 @@ export default {
     },
     data() {
         return {
-            params: {
-                openId: uni.getStorageSync('openID'),
-                address: '',
-                areaId: '',
-                areaName: '',
-                cityId: '',
-                cityName: '',
-                code: '',
-                name: '',
-                provinceId: '',
-                provinceName: '',
-                sn: ''
-            },
+            params: { ...defaultparams },
             regionVisible: false,
             result: {
                 result: '请选择区域'
@@ -192,75 +194,52 @@ export default {
                 })
             }
         },
-        getAddress(code) {
-            // return
-            let vm = this
-            this.$http({
+        async getAddress(code) {
+            const { result: point } = await this.$http({
                 url: this.$api.isExistAddress,
                 method: 'GET',
                 data: {
                     code: code
                 }
-            }).then(res => {
-                if (res.data.code == 200) {
-                    let point = res.data.result
-                    if (point) {
-                        vm.addressFlag = true
-                        vm.result = res
-                        vm.params.provinceId = point.provinceId
-                        vm.params.cityId = point.cityId
-                        vm.params.areaId = point.areaId
-                        vm.params.provinceName = point.provinceName
-                        vm.params.cityName = point.cityName
-                        vm.params.areaName = point.areaName
-                        vm.params.address = point.address
-                        vm.params.name = point.name
-                    } else {
-                        vm.addressFlag = false
-                        vm.params.provinceId = ''
-                        vm.params.cityId = ''
-                        vm.params.areaId = ''
-                        vm.params.provinceName = ''
-                        vm.params.cityName = ''
-                        vm.params.areaName = ''
-                        vm.params.address = ''
-                        vm.result.result = ' 请选择区域'
-                    }
-                }
             })
+            if (point) {
+                this.addressFlag = true
+                this.result = point
+                this.params = { ...this.params, ...point }
+            } else {
+                this.params = { ...defaultparams }
+                this.addressFlag = false
+                this.result.result = ' 请选择区域'
+            }
         },
-        add() {
+        async add() {
             if (!this.paramValidate()) {
                 return
             }
-            this.$http({
+            await this.$http({
                 url: this.$api.binding,
                 method: 'POST',
                 data: this.params
-            }).then(res => {
-                if (res.data.code == 200) {
-                    uni.showToast({
-                        title: '绑定成功',
-                        icon: 'none'
-                    })
-                    setTimeout(function () {
-                        uni.switchTab({
-                            url: '/pages/index/index'
-                        })
-                    }, 1000)
-                }
             })
+            uni.showToast({
+                title: '绑定成功',
+                icon: 'none'
+            })
+            setTimeout(function () {
+                uni.switchTab({
+                    url: '/pages/index/index'
+                })
+            }, 1000)
         },
-        edit() {
-            let vm = this
-            if (vm.params.name == '') {
+        async edit() {
+            if (this.params.name == '') {
                 uni.showToast({
                     title: '桩名称不能为空',
                     icon: 'none'
                 })
                 return false
             }
-            this.$http({
+            await this.$http({
                 url: this.$api.update,
                 method: 'POST',
                 data: {
@@ -268,51 +247,47 @@ export default {
                     code: this.params.code,
                     sn: this.params.sn
                 }
-            }).then(res => {
-                if (res.data.code == 200) {
-                    uni.showToast({
-                        title: '修改成功',
-                        icon: 'none'
-                    })
-                    setTimeout(function () {
-                        uni.switchTab({
-                            url: '/pages/index/index'
-                        })
-                    }, 1000)
-                }
             })
+            uni.showToast({
+                title: '修改成功',
+                icon: 'none'
+            })
+            setTimeout(function () {
+                uni.switchTab({
+                    url: '/pages/index/index'
+                })
+            }, 1000)
         },
         paramValidate() {
-            let vm = this
-            if (vm.params.name == '') {
+            if (this.params.name == '') {
                 uni.showToast({
                     title: '桩名称不能为空',
                     icon: 'none'
                 })
                 return false
             }
-            if (vm.params.code == '') {
+            if (this.params.code == '') {
                 uni.showToast({
                     title: '注册码不能为空',
                     icon: 'none'
                 })
                 return false
             }
-            if (vm.params.code.length != 38) {
+            if (this.params.code.length != 38) {
                 uni.showToast({
                     title: '注册码应为38位',
                     icon: 'none'
                 })
                 return false
             }
-            if (!vm.params.sn) {
+            if (!this.params.sn) {
                 uni.showToast({
                     title: 'sn码不能为空',
                     icon: 'none'
                 })
                 return false
             }
-            if (vm.params.sn.length != 11) {
+            if (this.params.sn.length != 11) {
                 uni.showToast({
                     title: 'sn码应为11位',
                     icon: 'none'
@@ -320,9 +295,9 @@ export default {
                 return false
             }
             if (
-                !vm.params.provinceId ||
-                !vm.params.cityId ||
-                !vm.params.areaId
+                !this.params.provinceId ||
+                !this.params.cityId ||
+                !this.params.areaId
             ) {
                 uni.showToast({
                     title: '区域不能为空',
@@ -330,7 +305,7 @@ export default {
                 })
                 return false
             }
-            if (!vm.params.openId) {
+            if (!this.params.openId) {
                 uni.showToast({
                     title: '请重新打开该小程序，允许授权登录后体验完整功能',
                     icon: 'none'

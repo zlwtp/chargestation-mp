@@ -290,12 +290,12 @@ export default {
                     break
                 case 13: //常见问题
                     uni.navigateTo({
-                        url: '/pages/commonProblem/commonProblem'
+                        url: '/pages/feedback/commonProblem'
                     })
                     break
                 case 14: //地址管理
                     uni.navigateTo({
-                        url: '/pages/commonProblem/commonProblem'
+                        url: '/pages/feedback/commonProblem'
                     })
                     break
                 case 15: //全部订单
@@ -328,26 +328,24 @@ export default {
         async getInstructionsGet(model) {
             let baseUrl =
                 'https://www.chargestation.online/pile/instructions/static/'
-            const { code, result } = await this.$http({
+            const { result } = await this.$http({
                 url: this.$api.instructionsGet,
                 method: 'GET',
                 data: {
                     model: model
                 }
             })
-            if (code == 200) {
-                if (!result) {
-                    return uni.showToast({
-                        title: '暂无文档',
-                        icon: 'none',
-                        duration: 2000
-                    })
-                }
-                if (vm.isInstall) {
-                    vm.openReport(baseUrl + result.installInstructionUrl)
-                } else {
-                    vm.openReport(baseUrl + result.operationInstructionUrl)
-                }
+            if (!result) {
+                return uni.showToast({
+                    title: '暂无文档',
+                    icon: 'none',
+                    duration: 2000
+                })
+            }
+            if (vm.isInstall) {
+                vm.openReport(baseUrl + result.installInstructionUrl)
+            } else {
+                vm.openReport(baseUrl + result.operationInstructionUrl)
             }
         },
         async getInstructions(type) {
